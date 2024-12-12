@@ -32,7 +32,24 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 }
 ```  
 
-一些时候可能会出现 cell 丢失，数据显示不全的情况，可以在 UIViewController 的 viewDidLayoutSubviews 回调里也执行一次修复这个问题  
+在搭配 MJRefresh 实现下拉刷新时，可能会出现 cell 丢失，数据显示不全的情况，解决方案是在列表更新数据后再执行一次裁剪方法  
+
+```swift
+- (void)pullRefreshCallBack {
+    UICollectionView *collectionView = _collectionView;
+    [collectionView.mj_header endRefreshing];
+    [collectionView reloadData];
+    
+    // 在下拉刷新后的回调里执行 reloadData 之后，补充下面的代码修复 cell 丢失的问题
+    // 这里必须通过 dispatch_async 包一下，否则跟 MJRefresh 的执行顺序可能会出现冲突
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:collectionView];
+    });
+}
+```
+
+如果其他情况下还有这个问题的话，可以尝试在 UIViewController 的 viewDidLayoutSubviews 回调里也执行一次裁剪方法  
+
 ```swift
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
