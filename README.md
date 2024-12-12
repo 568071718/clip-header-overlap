@@ -6,7 +6,13 @@
 
 * CocoaPods  
 ```
+以下源选择一个配置到项目 Podfile 文件，执行 pod install  
+
+# Github  
 pod 'clip-header-overlap', :git => 'https://github.com/568071718/clip-header-overlap.git'  
+
+# Gitee  
+pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-overlap.git'  
 ```
 
 ## 使用  
