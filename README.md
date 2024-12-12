@@ -2,6 +2,11 @@
 
 在使用 UICollectionViewFlowLayout 并且开启 header 吸附时，如果 header 的背景是透明的，会出现 header 跟 cell 重叠的现象，这个项目尝试解决这个问题  
 
+---  
+
+* [Github](https://github.com/568071718/clip-header-overlap)    
+* [Gitee](https://gitee.com/568071718/clip-header-overlap)  
+
 ## 集成  
 
 * CocoaPods  
