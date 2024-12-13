@@ -14,9 +14,10 @@
  */
 static NSInteger CLIP_FLAG = 1;
 
-@interface ViewController () <UICollectionViewDelegateFlowLayout ,UICollectionViewDataSource>
+@interface ViewController () <UICollectionViewDelegateFlowLayout ,UICollectionViewDataSource ,UITableViewDelegate ,UITableViewDataSource>
 
 @property (strong ,nonatomic) UICollectionView *collectionView;
+@property (strong ,nonatomic) UITableView *tableView;
 @end
 
 @implementation ViewController
@@ -25,6 +26,11 @@ static NSInteger CLIP_FLAG = 1;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self setupCollectionView];
+//    [self setupTableView];
+}
+
+- (void)setupCollectionView {
     CGRect frame = self.view.bounds;
     frame.origin.y = 100;
     frame.size.height = frame.size.height - frame.origin.y;
@@ -48,12 +54,28 @@ static NSInteger CLIP_FLAG = 1;
     [self.view addSubview:_collectionView];
 }
 
-#pragma mark - collection view
+- (void)setupTableView {
+    CGRect frame = self.view.bounds;
+    frame.origin.y = 100;
+    frame.size.height = frame.size.height - frame.origin.y;
+    
+    _tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
+    [_tableView registerClass:[UITableViewHeaderFooterView class] forHeaderFooterViewReuseIdentifier:@"UITableViewHeaderFooterView"];
+    [self.view addSubview:_tableView];
+}
+
+#pragma mark - scroll view
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (CLIP_FLAG == 1) {
         [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_collectionView];
+        [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_tableView];
     }
 }
+
+#pragma mark - collection view
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 4;
 }
@@ -112,4 +134,49 @@ static NSInteger CLIP_FLAG = 1;
     return header;
 }
 
+#pragma mark - table view
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 5;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 20;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell" forIndexPath:indexPath];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.backgroundColor = [UIColor brownColor];
+    [cell.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.text = [NSString stringWithFormat:@"Cell %@-%@",@(indexPath.section) ,@(indexPath.row)];
+    [cell addSubview:label];
+    
+    [label sizeToFit];
+    CGPoint center = CGPointZero;
+    center.x = cell.frame.size.width * 0.5;
+    center.y = cell.frame.size.height * 0.5;
+    label.center = center;
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 44;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UITableViewHeaderFooterView *header = [tableView dequeueReusableHeaderFooterViewWithIdentifier:@"UITableViewHeaderFooterView"];
+    [header.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.text = [NSString stringWithFormat:@"Header %@" ,@(section)];
+    [header.contentView addSubview:label];
+    
+    [label sizeToFit];
+    CGPoint center = CGPointZero;
+    center.x = tableView.frame.size.width * 0.5;
+    center.y = 44 * 0.5;
+    label.center = center;
+    return header;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 44;
+}
 @end

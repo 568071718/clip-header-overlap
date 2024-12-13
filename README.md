@@ -20,7 +20,7 @@ pod 'clip-header-overlap', :git => 'https://github.com/568071718/clip-header-ove
 pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-overlap.git'  
 ```
 
-## 使用  
+## UICollectionView  
 
 在 scrollViewDidScroll 和 willDisplayCell 里面执行 YXClipHeaderOverlap 提供的方法  
 ```swift
@@ -57,7 +57,16 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 }
 ```
 
+## UITableView  
 
-## 其他  
-关于 UITableView 暂时是预留了一个接口，但内部还未实现，等后面不忙了可能会补充一下  
+UITableView 似乎只需要在 scrollViewDidScroll 里面执行裁剪业务就好   
+
+```
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_tableView];
+}
+```
+
+有碰到其他问题参考上面 UICollectionView 的解决方案  
+
 
