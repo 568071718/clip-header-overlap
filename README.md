@@ -14,8 +14,8 @@
 ## 集成  
 
 * CocoaPods  
-```
-以下源选择一个配置到项目 Podfile 文件，执行 pod install  
+```ruby
+# 以下源选择一个配置到项目 Podfile 文件，执行 pod install  
 
 # Github  
 pod 'clip-header-overlap', :git => 'https://github.com/568071718/clip-header-overlap.git'  
@@ -27,7 +27,7 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 ## UICollectionView  
 
 在 scrollViewDidScroll 和 willDisplayCell 里面执行 YXClipHeaderOverlap 提供的方法  
-```swift
+```objc
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_collectionView];
 }
@@ -38,7 +38,7 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 
 在搭配 MJRefresh 实现下拉刷新时，可能会出现 cell 丢失，数据显示不全的情况，解决方案是在列表更新数据后再执行一次裁剪方法  
 
-```swift
+```objc
 - (void)pullRefreshCallBack {
     UICollectionView *collectionView = _collectionView;
     [collectionView.mj_header endRefreshing];
@@ -54,7 +54,7 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 
 如果其他情况下还有这个问题的话，可以尝试在 UIViewController 的 viewDidLayoutSubviews 回调里也执行一次裁剪方法  
 
-```swift
+```objc
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_collectionView];
@@ -65,7 +65,7 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 
 UITableView 似乎只需要在 scrollViewDidScroll 里面执行裁剪业务就好   
 
-```
+```objc
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_tableView];
 }
