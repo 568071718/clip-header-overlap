@@ -27,37 +27,23 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 ## UICollectionView  
 
 在 scrollViewDidScroll 和 willDisplayCell 里面执行 YXClipHeaderOverlap 提供的方法  
-```objc
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_collectionView];
+```swift
+func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    YXClipHeaderOverlap.adjustCellMaskForHeaderOverlap(withListView: scrollView)
 }
-- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:collectionView willDisplayCell:cell];
+func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    YXClipHeaderOverlap.adjustCellMaskForHeaderOverlap(withListView: collectionView, willDisplayCell: cell)
 }
 ```  
 
-在搭配 MJRefresh 实现下拉刷新时，可能会出现 cell 丢失，数据显示不全的情况，解决方案是在列表更新数据后再执行一次裁剪方法  
+在搭配 MJRefresh 实现刷新时，由于 `endRefreshing` 有一个回弹过程，可能会出现错误裁剪(cell 丢失，数据显示不全)的情况，解决方案是在 MJ 结束刷新后再执行一次裁剪方法  
 
-```objc
-- (void)pullRefreshCallBack {
-    UICollectionView *collectionView = _collectionView;
-    [collectionView.mj_header endRefreshing];
-    [collectionView reloadData];
-    
-    // 在下拉刷新后的回调里执行 reloadData 之后，补充下面的代码修复 cell 丢失的问题
-    // 这里必须通过 dispatch_async 包一下，否则跟 MJRefresh 的执行顺序可能会出现冲突
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:collectionView];
-    });
-}
-```
-
-如果其他情况下还有这个问题的话，可以尝试在 UIViewController 的 viewDidLayoutSubviews 回调里也执行一次裁剪方法  
-
-```objc
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_collectionView];
+```swift
+if let header = collectionView.mj_header {
+    header.endRefreshingCompletionBlock = { [weak self] in
+        guard let self = self else { return }
+        YXClipHeaderOverlap.adjustCellMaskForHeaderOverlap(withListView: collectionView)
+    }
 }
 ```
 
@@ -65,9 +51,9 @@ pod 'clip-header-overlap', :git => 'https://gitee.com/568071718/clip-header-over
 
 UITableView 似乎只需要在 scrollViewDidScroll 里面执行裁剪业务就好   
 
-```objc
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [YXClipHeaderOverlap adjustCellMaskForHeaderOverlapWithListView:_tableView];
+```swift
+func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    YXClipHeaderOverlap.adjustCellMaskForHeaderOverlap(withListView: scrollView)
 }
 ```
 
